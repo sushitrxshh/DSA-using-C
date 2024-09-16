@@ -1,0 +1,95 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct node {
+    int data;
+    struct node* next;
+} Node;
+
+Node* createNode(int data) {
+    Node* ptr = malloc(sizeof(Node));
+    if (!ptr) {
+        printf("Memory error\n");
+        return NULL;
+    }
+    ptr->data = data;
+    ptr->next = NULL;
+    return ptr;
+}
+
+void printLL(Node* ptr) {
+    while (ptr != NULL) {
+        printf("Element: %d\n", ptr->data);
+        ptr = ptr->next;
+    }
+}
+
+Node* insertAtEnd(Node* head, int data) {
+    Node* ptr = createNode(data);
+    if (head == NULL) {
+        return ptr;
+    }
+    Node* p = head;
+    while (p->next != NULL) {
+        p = p->next;
+    }
+    p->next = ptr;
+    return head;
+}
+
+Node* deleteNodeWithData(Node* head, int data) {
+    Node* temp = head;
+    Node* prev = NULL;
+    Node* lastOccurrence = NULL;
+    Node* prevLastOccurrence = NULL;
+
+    while (temp != NULL) {
+        if (temp->data == data) {
+            lastOccurrence = temp;
+            prevLastOccurrence = prev;
+        }
+        prev = temp;
+        temp = temp->next;
+    }
+
+    if (lastOccurrence == NULL) {
+        printf("Data not found in the linked list.\n");
+        return head;
+    }
+
+    if (lastOccurrence == head) {
+        head = head->next;
+    } else {
+        prevLastOccurrence->next = lastOccurrence->next;
+    }
+
+    free(lastOccurrence);
+    return head;
+}
+
+int main() {
+    Node* head = NULL;
+    int n, data, deleteData;
+
+    printf("Enter the number of elements in the linked list: ");
+    scanf("%d", &n);
+
+    for (int i = 0; i < n; i++) {
+        printf("Enter element %d: ", i + 1);
+        scanf("%d", &data);
+        head = insertAtEnd(head, data);
+    }
+
+    printf("Linked list before deletion:\n");
+    printLL(head);
+
+    printf("Enter the data you want to delete from the end: ");
+    scanf("%d", &deleteData);
+
+    head = deleteNodeWithData(head, deleteData);
+
+    printf("Linked list after deletion of the last occurrence of %d:\n", deleteData);
+    printLL(head);
+
+    return 0;
+}
